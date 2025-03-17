@@ -14,27 +14,39 @@ export default function AudioRecorder() {
   useEffect(() => {
     if (!recorder) return;
 
-    recorder.ondataavailable = async (ev) => {
+    recorder.addEventListener("dataavailable", async (ev) => {
       if (ev.data.size > 0) {
         console.log(ev.data);
         setAudioChunks((prev) => [...prev, ev.data]);
 
+        const formData = new FormData();
+        formData.append("chunk", ev.data);
+        formData.append("state", "continue");
+
         await fetch("/api/upload", {
           method: "POST",
-          body: ev.data,
+          body: formData,
         });
       }
-    };
+    });
 
     recorder.addEventListener("start", () => {
       console.log("recording started");
       setRecordingStatus("recording");
     });
 
-    recorder.onstop = () => {
+    recorder.addEventListener("stop", async () => {
       console.log("recording stopped");
       setRecordingStatus("inactive");
-    };
+
+      const formData = new FormData();
+      formData.append("state", "stop");
+
+      await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+    });
 
     return () => {
       if (recorder.state === "recording") {

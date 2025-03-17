@@ -7,25 +7,25 @@ import type { NextRequest } from "next/server";
 let chunks: Blob[] = [];
 
 export async function POST(req: NextRequest) {
-  const body = await req.arrayBuffer()
+  const body = await req.formData();
 
-  const chunk = new Blob([body], { type: "audio/webm" });
-  chunks.push(chunk);
+  const state = body.get("state");
+  const chunk = body.get("chunk");
 
-  return NextResponse.json('ok');
-}
+  if (state === "continue" && chunk) {
+    chunks.push(chunk as Blob);
+  } else if (state === "stop") {
+    const audio = new Blob(chunks, { type: "audio/webm" });
 
-export async function GET() {
-  const audio = new Blob(chunks, { type: "audio/webm" });
+    const uploadsDir = path.join(process.cwd(), 'uploads');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
 
-  const uploadsDir = path.join(process.cwd(), 'uploads');
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
+    const filepath = path.join(uploadsDir, `recording-${Date.now()}.webm`);
+    await writeFile(filepath, Buffer.from(await audio.arrayBuffer()));
+    chunks = [];
   }
-
-  const filepath = path.join(uploadsDir, `recording-${Date.now()}.webm`);
-  await writeFile(filepath, Buffer.from(await audio.arrayBuffer()));
-  chunks = [];
 
   return NextResponse.json('ok');
 }
