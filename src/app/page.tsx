@@ -1,3 +1,9 @@
-export default function Home() {
-  return <main>Hello world</main>;
+import AudioRecorder from "@/components/audio-recorder";
+
+export default async function RootPage() {
+  return (
+    <main>
+      <AudioRecorder />
+    </main>
+  );
 }
