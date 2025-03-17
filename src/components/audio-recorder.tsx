@@ -14,10 +14,15 @@ export default function AudioRecorder() {
   useEffect(() => {
     if (!recorder) return;
 
-    recorder.ondataavailable = (ev) => {
+    recorder.ondataavailable = async (ev) => {
       if (ev.data.size > 0) {
         console.log(ev.data);
         setAudioChunks((prev) => [...prev, ev.data]);
+
+        await fetch("/api/upload", {
+          method: "POST",
+          body: ev.data,
+        });
       }
     };
 
