@@ -1,6 +1,6 @@
 import AudioRecorder from "@/components/audio-recorder";
 
-export default async function RootPage() {
+export default function RootPage() {
   return (
     <main>
       <AudioRecorder />
