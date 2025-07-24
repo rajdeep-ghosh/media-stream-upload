@@ -1,6 +1,6 @@
-# File Upload Stream
+# Media Stream Upload
 
-POC to test file upload to backend directly from MediaRecorder stream
+POC to test audio upload to backend directly from MediaRecorder stream
 
 ## Setup
 
