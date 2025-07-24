@@ -1,4 +1,4 @@
-# Media Stream Upload
+# Media Stream Upload POC
 
 POC to test audio upload to backend directly from MediaRecorder stream
 
